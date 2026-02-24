@@ -1,0 +1,140 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(git add *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git branch *)",
+      "Bash(git stash *)",
+      "Bash(git commit *)",
+      "Bash(git checkout *)",
+      "Bash(git worktree *)",
+      "Bash(ls *)",
+      "Bash(tree *)",
+      "WebSearch"
+    ]
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/smart-context-injector.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-dangerous-commands.js\"",
+            "timeout": 3
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-protected-files.js\"",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-edit-autoformat.js\"",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-bash-analyzer.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/project-profile-updater.js\"",
+            "timeout": 5
+          },
+          {
+            "type": "prompt",
+            "prompt": "You are a senior engineering lead performing a completion review. Context: $ARGUMENTS\n\nApply the Big-Tech Definition of Done:\n\n1. COMPLETENESS: Did Claude address ALL parts of the user's request? Check each sentence of the original request.\n2. VERIFICATION: For every code change, was it verified? Check:\n   - Type check ran (tsc --noEmit) if TypeScript project?\n   - Relevant tests ran and passed?\n   - Build succeeded (if applicable)?\n   If code was written but NONE of these verifications happened, that's a failure.\n3. QUALITY: No placeholder code, no TODO comments left behind, no console.log debugging, no `any` types in TypeScript.\n4. ERRORS: If errors occurred during the task, were they ALL resolved? Unresolved errors = incomplete.\n5. MULTI-STEP: If the request had multiple parts (e.g., 'do X and Y and Z'), check EACH part individually.\n6. SIDE EFFECTS: Were any files modified that shouldn't have been? Any regressions introduced?\n\nBe strict but fair: if the user asked for a simple explanation, don't require tests. But if code was written or modified, verification is mandatory.\n\nRespond with JSON: {\"ok\": true} to allow stopping, or {\"ok\": false, \"reason\": \"specific explanation of what's incomplete\"} to continue.",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Evaluate if this subagent completed its assigned task. Input: $ARGUMENTS\n\nStrict checks:\n1. DELIVERABLE: Did the subagent produce a concrete result? (code written, tests passed, report generated — not just 'I analyzed it')\n2. VERIFICATION: If code was changed, were tests run? Did type-check pass?\n3. ERRORS: Were all errors encountered resolved? Partial fixes don't count.\n4. ACTIONABLE: Is the output immediately usable by the parent agent without further work?\n5. COMPLETENESS: Did it address the FULL scope of its assignment, not just the easy parts?\n\nReturn: {\"ok\": true} if truly complete, or {\"ok\": false, \"reason\": \"specific gap\"} to continue.",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-context-loader.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact-saver.js\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/idle-reminder.js\"",
+            "timeout": 3
+          }
+        ]
+      }
+    ]
+  }
+}

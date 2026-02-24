@@ -1,0 +1,13 @@
+# Session-specific (don't commit)
+.modified-files.log
+.change-manifest.json
+memory.jsonl
+
+# Local settings (personal preferences)
+settings.local.json
+
+# Agent memory (project-specific, auto-generated)
+agent-memory-local/
+
+# Project profile (auto-generated per machine)
+project-profile.json
