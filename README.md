@@ -1,81 +1,67 @@
-# create-claude-config
+# claude-config
 
-Scaffold a production-grade `.claude/` directory for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with hooks, rules, skills, and agents.
+[Claude Code](https://docs.anthropic.com/en/docs/claude-code)용 프로덕션 수준 `.claude/` 설정 템플릿.
+훅, 규칙, 스킬, 에이전트를 포함합니다.
 
-## Quick Start
-
-```bash
-npx create-claude-config
-```
-
-Or with npm init:
+## 사용법
 
 ```bash
-npm init claude-config
+git clone https://github.com/ratingless/claude-config.git
+cp -r claude-config/ 내프로젝트/.claude/
 ```
 
-## What's Included
+## 구성 요소
 
-### Hooks (9) — Automated Development Lifecycle
+### Hooks (9개) — 개발 라이프사이클 자동화
 
-| Hook                     | Event                   | What It Does                                                       |
-| ------------------------ | ----------------------- | ------------------------------------------------------------------ |
-| smart-context-injector   | UserPromptSubmit        | Analyzes intent, domain, complexity, risk — injects relevant hints |
-| guard-dangerous-commands | PreToolUse:Bash         | Blocks `rm -rf /`, `git push --force`, `DROP TABLE`, etc.          |
-| guard-protected-files    | PreToolUse:Write\|Edit  | Protects .env, credentials, lock files + impact analysis           |
-| post-edit-autoformat     | PostToolUse:Write\|Edit | Auto-runs prettier/eslint, tracks changes, detects quality issues  |
-| post-bash-analyzer       | PostToolUse:Bash        | Detects test failures, build errors across JS/Python/Go/Rust/Java  |
-| session-context-loader   | SessionStart            | Detects project stack (10+ languages), loads learned conventions   |
-| project-profile-updater  | Stop                    | Accumulates project patterns across sessions                       |
-| pre-compact-saver        | PreCompact              | Saves session state before context compression                     |
-| idle-reminder            | Notification:idle       | Shows progress reminders during idle periods                       |
+| 훅                       | 이벤트                  | 설명                                                 |
+| ------------------------ | ----------------------- | ---------------------------------------------------- |
+| smart-context-injector   | UserPromptSubmit        | 의도/도메인/복잡도/위험도 분석 후 맥락 힌트 주입     |
+| guard-dangerous-commands | PreToolUse:Bash         | `rm -rf /`, `git push --force`, `DROP TABLE` 등 차단 |
+| guard-protected-files    | PreToolUse:Write\|Edit  | .env, 인증서, lock 파일 보호 + 영향도 분석           |
+| post-edit-autoformat     | PostToolUse:Write\|Edit | prettier/eslint 자동 실행, 변경 추적, 품질 검사      |
+| post-bash-analyzer       | PostToolUse:Bash        | 테스트 실패/빌드 에러 감지 (JS/Python/Go/Rust/Java)  |
+| session-context-loader   | SessionStart            | 프로젝트 스택 감지 (10개+ 언어), 학습된 컨벤션 로드  |
+| project-profile-updater  | Stop                    | 세션별 프로젝트 패턴 누적                            |
+| pre-compact-saver        | PreCompact              | 컨텍스트 압축 전 세션 상태 저장                      |
+| idle-reminder            | Notification:idle       | 유휴 시 진행 상황 리마인더                           |
 
-Plus **Stop prompt** (Definition of Done verification) and **SubagentStop prompt** (subagent completion check).
+추가로 **Stop 프롬프트** (Definition of Done 검증)와 **SubagentStop 프롬프트** (서브에이전트 완료 검증) 포함.
 
-### Rules (7) — Universal Coding Standards
+### Rules (7개) — 범용 코딩 표준
 
-| Rule                  | Scope                                                      |
-| --------------------- | ---------------------------------------------------------- |
-| coding-style.md       | Naming, functions, error handling (TS/Python/Go/Rust/Java) |
-| git-workflow.md       | Conventional commits, branch naming, verification          |
-| security.md           | Protected files, OWASP Top 10, secrets management          |
-| validation.md         | Pre-completion checks (type/test/lint/build)               |
-| definition-of-done.md | 16 criteria by work type                                   |
-| task-memory.md        | 3-document pattern for complex tasks                       |
-| adr.md                | Architecture Decision Records                              |
+| 규칙                  | 범위                                                  |
+| --------------------- | ----------------------------------------------------- |
+| coding-style.md       | 네이밍, 함수 설계, 에러 처리 (TS/Python/Go/Rust/Java) |
+| git-workflow.md       | Conventional Commits, 브랜치 네이밍, 검증 규칙        |
+| security.md           | 보호 파일, OWASP Top 10, 시크릿 관리                  |
+| validation.md         | 완료 전 검증 (타입체크/테스트/린트/빌드)              |
+| definition-of-done.md | 작업 유형별 16가지 완료 기준                          |
+| task-memory.md        | 복잡 태스크용 3문서 패턴                              |
+| adr.md                | Architecture Decision Records                         |
 
-### Skills (3) — On-Demand Knowledge
+### Skills (3개) — 온디맨드 지식
 
-| Skill         | Chapters                         |
+| 스킬          | 챕터                             |
 | ------------- | -------------------------------- |
 | code-quality  | clean-code, testing, performance |
 | debugging     | error-analysis, common-patterns  |
 | project-setup | build-tools, ci-cd               |
 
-### Agents (4) — Specialist Teammates
+### Agents (4개) — 전문 팀원
 
-| Agent            | Role                                                                      |
-| ---------------- | ------------------------------------------------------------------------- |
-| code-reviewer    | 5-category code review (correctness, security, TS, perf, maintainability) |
-| test-runner      | Auto-detect stack, run tests, fix failures                                |
-| planner          | 3-document planning system (Plan, Context, Checklist)                     |
-| security-auditor | OWASP Top 10, secrets detection, dependency audit                         |
+| 에이전트         | 역할                                                   |
+| ---------------- | ------------------------------------------------------ |
+| code-reviewer    | 5카테고리 코드 리뷰 (정확성, 보안, TS, 성능, 유지보수) |
+| test-runner      | 스택 자동 감지, 테스트 실행, 실패 수정                 |
+| planner          | 3문서 기획 시스템 (Plan, Context, Checklist)           |
+| security-auditor | OWASP Top 10, 시크릿 감지, 의존성 감사                 |
 
-## Options
+## 커스터마이즈
 
-```bash
-npx create-claude-config              # Interactive setup
-npx create-claude-config --force      # Overwrite without prompting
-npx create-claude-config --update     # Update only new/changed files
-npx create-claude-config --only hooks,rules  # Selective install
-npx create-claude-config --dry-run    # Preview only
-```
+### 플러그인 추가 (프로젝트별)
 
-## Customization
-
-### Add plugins (project-specific)
-
-Edit `.claude/settings.json`:
+`.claude/settings.json`에 추가:
 
 ```json
 {
@@ -86,40 +72,32 @@ Edit `.claude/settings.json`:
 }
 ```
 
-### Override settings locally
+### 로컬 설정 오버라이드
 
-Create `.claude/settings.local.json` (gitignored) for personal preferences.
+`.claude/settings.local.json` 생성 (gitignore 대상) — 개인 환경설정용.
 
-### Customize rules
+### 규칙 커스터마이즈
 
-Edit any file in `.claude/rules/` to match your team's conventions.
+`.claude/rules/` 파일을 팀 컨벤션에 맞게 수정.
 
-### Add custom hooks
+### 커스텀 훅 추가
 
-Add `.js` files to `.claude/hooks/` and register them in `settings.json`.
+`.claude/hooks/`에 `.js` 파일 추가 후 `settings.json`에 등록.
 
-## Token Consumption
+## 토큰 소비
 
-| Component       | Tokens      | When                                  |
-| --------------- | ----------- | ------------------------------------- |
-| Rules (7 files) | ~2,500      | Always loaded (1.25% of 200K context) |
-| Hooks (9 files) | 0           | External Node.js process              |
-| Skills          | ~1,000 each | On-demand only                        |
-| Agents          | ~450 each   | When summoned                         |
+| 구성 요소   | 토큰      | 시점                              |
+| ----------- | --------- | --------------------------------- |
+| Rules (7개) | ~2,500    | 항상 로드 (200K 컨텍스트의 1.25%) |
+| Hooks (9개) | 0         | 외부 Node.js 프로세스             |
+| Skills      | 각 ~1,000 | 호출 시에만                       |
+| Agents      | 각 ~450   | 소환 시에만                       |
 
-## Updating
-
-Re-run with `--update` to get new files without overwriting your customizations:
-
-```bash
-npx create-claude-config --update
-```
-
-## Requirements
+## 요구 사항
 
 - Node.js >= 18
 - Claude Code CLI
 
-## License
+## 라이선스
 
 MIT
